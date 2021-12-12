@@ -5,7 +5,26 @@ class ApiController < ApplicationController
     render json: top_posts
   end
 
+  def list_comments
+    render json: search(comments, params[:q])
+  end
+
   private
+
+  def search(records, keyword)
+    return records unless keyword.present?
+
+    matched = []
+    records.each do |record|
+      record.keys.each do |key|
+        if record[key].to_s == keyword
+          matched << record
+          break
+        end
+      end
+    end
+    matched
+  end
 
   def comments
     @_comments ||= Array.wrap(http_get("https://jsonplaceholder.typicode.com/comments"))
